@@ -78,7 +78,65 @@ export const loginPlayer = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+export const logoutPlayer = async (req, res) => {
+    res.clearCookie("token")
+    res.status(200).json({ message: "Logged out successfully" })
+}
+export const findPlayerByEmail = async (req, res) => {
+    try {
+        const { email } = req.query;
+
+        const player = await Player.findOne({ email });
+        if (!player) {
+            return res.status(404).json({ message: "Player not found" });
+        }
+
+        res.status(200).json({
+            _id: player._id,
+            name: player.name,
+            email: player.email,
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
 
 export const getProfile = async (req, res) => {
     res.status(200).json(req.user)
 }
+
+export const getPlayerById = async (req, res) => {
+    try {
+        const { playerId } = req.params;
+        const player = await Player.findById(playerId).select("-password");
+        if (!player) {
+            return res.status(404).json({ message: "Player not found" });
+        }
+        res.status(200).json(player);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
+export const promotePlayer = async (req, res) => {
+    try {
+        const { playerId } = req.params;
+
+        const player = await Player.findById(playerId);
+        if (!player) {
+            return res.status(404).json({ message: "Player not found" });
+        }
+
+        player.role = "admin";
+        await player.save();
+
+        res.status(200).json({
+            _id: player._id,
+            name: player.name,
+            email: player.email,
+            role: player.role,
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};

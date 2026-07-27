@@ -9,6 +9,9 @@
 import { PointsTable } from "./pages/PointsTable.jsx";
 import { AdminDashboard } from "./pages/AdminDashboard.jsx";
 import { PlayerStats } from "./pages/PlayerStats.jsx";
+import { Teams } from "./pages/Teams.jsx";
+import { TeamDetail } from "./pages/TeamDetails.jsx";
+import { PlayerProfile } from "./pages/PlayerProfile.jsx";
 
     function App() {
         return (
@@ -22,6 +25,9 @@ import { PlayerStats } from "./pages/PlayerStats.jsx";
                         <Route path="/MyTeam" element={<ProtectedRoute><MyTeam/></ProtectedRoute>} />
                         <Route path="/pointstable" element={<PointsTable/>}  />
                         <Route path="/playerstats" element={<PlayerStats/>} />
+                        <Route path="/teams" element={<Teams/>} />
+                        <Route path="/teams/:teamId" element={<TeamDetail/>} />
+                        <Route path="/players/:playerId" element={<PlayerProfile/>} />
                         <Route path="/admin" element={<ProtectedRoute requiredRole="admin"><AdminDashboard/></ProtectedRoute>}  />
                     </Routes>
                 </BrowserRouter>

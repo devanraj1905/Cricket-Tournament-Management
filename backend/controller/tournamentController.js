@@ -43,3 +43,11 @@ if (!tournament) {
   res.status(200).json(tournament)
 
 }
+export const getAllTournaments = async (req, res) => {
+    try {
+        const tournaments = await Tournament.find().populate("teams","name");
+        res.status(200).json(tournaments)
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};

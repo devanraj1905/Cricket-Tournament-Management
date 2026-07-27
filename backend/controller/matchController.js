@@ -7,21 +7,34 @@ import Tournament from "../model/Tournament.js";
 
 export const createMatch = async (req, res) => {
     try {
-        const { tournament, teamA, teamB, venue, matchDate } = req.body
+        const { tournament, teamA, teamB, venue, matchDate } = req.body;
 
         if (teamA === teamB) {
-            res.status(500).json({ message: "Cannot be play against itself" });
+            return res.status(400).json({ message: "A team cannot play against itself" });
         }
 
-        const tournamentDoc = await Tournament.findById(tournament)
+        const tournamentDoc = await Tournament.findById(tournament);
         if (!tournamentDoc) {
-            res.status(500).json({ message: "Tournament does not exists" });
+            return res.status(404).json({ message: "Tournament doesn't exist" });
         }
+
         const teamAInTournament = tournamentDoc.teams.some((id) => id.equals(teamA));
         const teamBInTournament = tournamentDoc.teams.some((id) => id.equals(teamB));
 
         if (!teamAInTournament || !teamBInTournament) {
             return res.status(400).json({ message: "Both teams must be part of this tournament" });
+        }
+
+        const existingMatch = await Match.findOne({
+            tournament,
+            $or: [
+                { teamA: teamA, teamB: teamB },
+                { teamA: teamB, teamB: teamA }
+            ]
+        });
+
+        if (existingMatch) {
+            return res.status(400).json({ message: "This match has already been scheduled" });
         }
 
         const match = await Match.create({
@@ -30,31 +43,46 @@ export const createMatch = async (req, res) => {
             teamB,
             venue,
             matchDate,
-        })
+        });
 
-        res.status(201).json(match)
+        res.status(201).json(match);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
+export const updateMatchResult = async (req, res) => {
+    try {
+        const { matchId } = req.params
+        const { winner, result } = req.body
+        const match = await Match.findById(matchId)
 
-export const updateMatchResult=async(req,res)=>{
-try{
-        const {matchId}=req.params
-    const {winner,result}=req.body
-    const match = await Match.findById(matchId)
-
-    if(!match){
-        return res.status(404).json({message:"Match does not exists."})
+        if (!match) {
+            return res.status(404).json({ message: "Match does not exists." })
+        }
+        if (!match.teamA.equals(winner) && !match.teamB.equals(winner)) {
+            return res.status(400).json({ message: "Winner must be one of the two teams that played" });
+        }
+        match.winner = winner;
+        match.result = result;
+        match.status = "completed"
+        await match.save();
+        res.status(200).json(match);
     }
-    if (!match.teamA.equals(winner) && !match.teamB.equals(winner)) {
-    return res.status(400).json({ message: "Winner must be one of the two teams that played" });
+    catch (error) { res.status(500).json({ message: error.message }) }
 }
-match.winner = winner;
-match.result = result;
-match.status = "completed"
-await match.save();
-res.status(200).json(match);
-}
-catch(error) { res.status(500).json({ message: error.message }) }
-}
+export const getAllMatches = async (req, res) => {
+    try {
+        const { status } = req.query;
+
+        const filter = status ? { status } : {};
+
+        const matches = await Match.find(filter)
+            .populate('teamA', 'name')
+            .populate('teamB', 'name')
+            .sort({ matchDate: -1 });
+
+        res.status(200).json(matches);
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to fetch matches', error: error.message });
+    }
+};

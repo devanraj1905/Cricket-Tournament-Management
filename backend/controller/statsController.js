@@ -83,3 +83,20 @@ export const getTablePoints=async(req,res)=>{
         return res.status(500).json({ message: error.message })
     }
 }
+
+export const getAllPlayerStats = async (req, res) => {
+    try {
+
+        const stats = await PlayerMatchStats
+            .find()
+            .populate("player", "name")
+            .populate("team", "name");
+
+        res.status(200).json(stats);
+
+    } catch (error) {
+        res.status(500).json({
+            message: error.message
+        });
+    }
+}
