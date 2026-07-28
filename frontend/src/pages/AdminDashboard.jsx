@@ -94,9 +94,9 @@ export function AdminDashboard() {
     const filteredTeamB = allTeams.filter((t) =>
         t.name.toLowerCase().includes(teamBSearch.toLowerCase())
     )
-    const filteredMatches=allMatch.filter((m)=>{
+    const filteredMatches=allMatch.filter((m)=>
         m.name.toLowerCase().includes(findMatch.toLowerCase())
-    })
+    )
   
 
         async function handleCreateTournament(e) {
