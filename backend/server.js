@@ -18,6 +18,7 @@ const app = express()
 app.use(cookieParser())
 app.use(cors({
   origin: "https://cricket-tournament-management.vercel.app",
+  
   credentials: true,
 }))
 app.use(express.json())
