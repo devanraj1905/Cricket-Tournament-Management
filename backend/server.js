@@ -17,7 +17,7 @@ connectDB()
 const app = express() 
 app.use(cookieParser())
 app.use(cors({
-  origin: ["https://cricket-tournament-management.vercel.app","http://localhost:3000"],
+  origin: "https://cricket-tournament-management.vercel.app",
   
   credentials: true,
 }))
