@@ -42,7 +42,8 @@ export function AdminDashboard() {
     const [promoteSearch, setPromoteSearch] = useState('')
     const [foundPromotePlayer, setFoundPromotePlayer] = useState(null)
     const [promoteError, setPromoteError] = useState('')
-
+    const [findMatch, setFindMatch] = useState('')
+    const [allMatch, setAllMatch] = useState('')
 
     useEffect(() => {
         async function fetchAllTeams() {
@@ -66,9 +67,22 @@ export function AdminDashboard() {
                 console.log(error)
             }
 
+            
         }
         fetchAllTournaments()
 
+    }, [])
+    useEffect(() => {
+        async function fetchAllMatches() {
+            try {
+                const response = await axiosInstance.get('/match/all')
+                setAllMatch(response.data)
+            }
+            catch (error) {
+                console.log(error)
+            }
+
+        }
     }, [])
     const filteredTournamentName = allTournament.filter((t) =>
         t.name.toLowerCase().includes(tournamentName.toLowerCase())
@@ -80,26 +94,30 @@ export function AdminDashboard() {
     const filteredTeamB = allTeams.filter((t) =>
         t.name.toLowerCase().includes(teamBSearch.toLowerCase())
     )
+    const filteredMatches=allMatch.filter((m)=>{
+        m.name.toLowerCase().includes(findMatch.toLowerCase())
+    })
+  
 
-    async function handleCreateTournament(e) {
-        e.preventDefault()
-        if (!name || !startDate || !endDate || !status) {
-            setTournamentError('Required field')
-            return
+        async function handleCreateTournament(e) {
+            e.preventDefault()
+            if (!name || !startDate || !endDate || !status) {
+                setTournamentError('Required field')
+                return
+            }
+            try {
+                const response = await axiosInstance.post('/tournament/create', { name, startDate, endDate, status })
+                setTournament(response.data)
+                setTournamentError('')
+                setName("")
+                setStartDate("")
+                setEndDate("")
+                setStatus("Upcoming")
+            }
+            catch (error) {
+                setTournamentError(error.response.data.message)
+            }
         }
-        try {
-            const response = await axiosInstance.post('/tournament/create', { name, startDate, endDate, status })
-            setTournament(response.data)
-            setTournamentError('')
-            setName("")
-            setStartDate("")
-            setEndDate("")
-            setStatus("Upcoming")
-        }
-        catch (error) {
-            setTournamentError(error.response.data.message)
-        }
-    }
 
     async function addTeamToTournament(e) {
         e.preventDefault()
@@ -353,7 +371,16 @@ export function AdminDashboard() {
                 <h2 className="text-xl font-semibold">Update Match Result</h2>
                 <div>
                     <label className="block text-sm">Match Id</label>
-                    <input type="text" value={matchId} onChange={(e) => setMatchId(e.target.value)} className="border rounded px-2 py-1 w-full" />
+                    <input type="text" value={findMatch} onChange={(e) => {setFindMatch(e.target.value);setMatchId('')}} className="border rounded px-2 py-1 w-full" />
+                    {findMatch && !matchId&& (
+                        <div>
+                            {filteredMatches.map((m)=>{
+                                <p key={m._id} onClick={()=>{setMatchId(m._id);setFindMatch(m.name)}} >{m.name}</p>
+                                })}
+                        </div>
+                    )
+
+                    }
                 </div>
                 <div>
                     <label className="block text-sm">Winner (Team Id)</label>
