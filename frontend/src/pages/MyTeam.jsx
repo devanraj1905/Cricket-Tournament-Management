@@ -139,7 +139,7 @@ export function MyTeam() {
                 <h2 className="text-xl font-semibold mb-3">Create Team</h2>
                 <form onSubmit={handleTeamCreate} className="flex gap-2">
                     <input type="text" placeholder="Team Name" className={inputClass} onChange={(e) => setTeam(e.target.value)} value={team} />
-                    <button className={btnClass} onClick={handleLoading} >Create</button>
+                    <button className={btnClass} >Create</button>
                 </form>
                 {teamError && <p className="text-red-600 text-sm mt-2">{teamError}</p>}
             </div>
