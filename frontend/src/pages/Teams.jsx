@@ -6,15 +6,21 @@ import { Link } from 'react-router-dom'
 export function Teams() {
     const [teams, setTeams] = useState([])
     const [search, setSearch] = useState('')
+    const [loading,setLodaing]=useState(false)
 
     useEffect(() => {
         async function fetchTeams() {
             try {
+                setLodaing(true)
                 const response = await axiosInstance.get('/team/all')
                 setTeams(response.data)
             } catch (error) {
                 console.log(error)
             }
+            finally{
+                setLodaing(false)
+            }
+
         }
         fetchTeams()
     }, [])
@@ -25,6 +31,11 @@ export function Teams() {
         )
     )
 
+    if (loading) return <div className="p-4 text-gray-500"><div className="fixed inset-0 bg-black/50 flex justify-center items-center">
+                            <div className="bg-white p-5 rounded-lg">
+                                Loading...
+                            </div>
+                        </div></div>
     return (
         <div className="max-w-3xl mx-auto mt-10 px-4">
             <h1 className="text-3xl font-bold mb-6">All Teams</h1>

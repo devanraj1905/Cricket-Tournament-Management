@@ -6,9 +6,10 @@ import { Tournament } from './Tournament'
 
 function Home() {
     const { user, setUser } = useAuth()
-   const [activeTab, setActiveTab] = useState('matches')
+    const [activeTab, setActiveTab] = useState('matches')
     return (
         <div className="max-w-2xl mx-auto mt-16 text-center">
+          
             <h1 className="text-4xl font-bold mb-4">Cricket Tournament Management</h1>
             <p className="text-gray-600 mb-6">Manage tournaments, teams, and view live stats and standings.</p>
             {!user &&

@@ -14,10 +14,10 @@ import cookieParser from "cookie-parser";
 dotenv.config() 
 connectDB()
 
-const app = express()
+const app = express() 
 app.use(cookieParser())
 app.use(cors({
-  origin: "https://cricket-tournament-management.vercel.app",
+  origin: ["https://cricket-tournament-management.vercel.app","http://localhost:3000"],
   
   credentials: true,
 }))

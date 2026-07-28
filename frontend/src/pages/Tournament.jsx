@@ -5,20 +5,33 @@ import { Link } from 'react-router-dom'
 
 export function Tournament() {
     const [tournament, setTournament] = useState([])
+    const [loading, setLoading] = useState(false)
+
     useEffect(() => {
         async function showTournament() {
             try {
+                setLoading(true)
                 const response = await axiosInstance.get("tournament/all")
                 setTournament(response.data)
+
             }
 
             catch (error) {
                 console.log(error);
 
             }
+            finally {
+                setLoading(false)
+            }
         }
         showTournament()
     }, [])
+    if (loading) return <div className="p-4 text-gray-500"><div className="fixed inset-0 bg-black/50 flex justify-center items-center">
+                            <div className="bg-white p-5 rounded-lg">
+                                Loading...
+                            </div>
+                        </div></div>
+
     return (
         <div><h1 className='font-bold  text-3xl text-blue-600'>Tournament</h1>
 
@@ -53,7 +66,7 @@ export function Tournament() {
                                     key={team._id}
                                     className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full"
                                 >
-                                   <Link to={'/teams/'+team._id}> {team.name}</Link>
+                                    <Link to={'/teams/' + team._id}> {team.name}</Link>
                                 </span>
                             ))}
                         </div>

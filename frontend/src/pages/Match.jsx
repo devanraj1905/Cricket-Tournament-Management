@@ -25,7 +25,11 @@ export function Match() {
         getMatch()
     }, [])
 
-    if (loading) return <div className="p-4 text-gray-500">Loading matches...</div>
+    if (loading) return <div className="p-4 text-gray-500"><div className="fixed inset-0 bg-black/50 flex justify-center items-center">
+                            <div className="bg-white p-5 rounded-lg">
+                                Loading...
+                            </div>
+                        </div></div>
     if (error) return <div className="p-4 text-red-600">{error}</div>
     if (match.length === 0) return <div className="p-4 text-gray-500">No matches scheduled yet.</div>
 

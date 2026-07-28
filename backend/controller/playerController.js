@@ -140,3 +140,12 @@ export const promotePlayer = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+export const getAllPlayers = async (req, res) => {
+        try {
+                const player = await Player.find().select('-password')
+                        
+                res.status(200).json(player);
+        } catch (error) {
+                res.status(500).json({ message: error.message });
+        }
+};

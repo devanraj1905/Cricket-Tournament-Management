@@ -44,7 +44,14 @@ export function AdminDashboard() {
     const [promoteError, setPromoteError] = useState('')
     const [findMatch, setFindMatch] = useState('')
     const [allMatch, setAllMatch] = useState([])
-    const [winnerName,setwinnerName]=useState('')
+    const [winnerName, setwinnerName] = useState('')
+    const [statsMatch, setStatsMatch] = useState('')
+    const [statsPlayer, setStatsPlayer] = useState('')
+    const [statsTeam, setStatsTeam] = useState('')
+    const [allPlayers, setAllPlayers] = useState([])
+    const [addTeamName,setAddTeamName]=useState('')
+    const [addTournamentName,setAddTournamentName]=useState('')
+
 
     useEffect(() => {
         async function fetchAllTeams() {
@@ -74,6 +81,19 @@ export function AdminDashboard() {
 
     }, [])
     useEffect(() => {
+        async function fetchAllPlayers() {
+            try {
+                const response = await axiosInstance.get('/player/all/players')
+                setAllPlayers(response.data)
+            }
+            catch (error) {
+                console.log(error)
+            }
+        }
+        fetchAllPlayers()
+    }, [])
+
+    useEffect(() => {
         async function fetchAllMatches() {
             try {
                 const response = await axiosInstance.get('/match/all')
@@ -89,6 +109,9 @@ export function AdminDashboard() {
     const filteredTournamentName = allTournament.filter((t) =>
         t.name.toLowerCase().includes(tournamentName.toLowerCase())
     )
+    const filteredaddTournamentName = allTournament.filter((t) =>
+        t.name.toLowerCase().includes(tournamentId.toLowerCase())
+    )
 
     const filteredTeamA = allTeams.filter((t) =>
         t.name.toLowerCase().includes(teamASearch.toLowerCase())
@@ -96,13 +119,18 @@ export function AdminDashboard() {
     const filteredTeamB = allTeams.filter((t) =>
         t.name.toLowerCase().includes(teamBSearch.toLowerCase())
     )
-    const filteredMatches = allMatch.filter((m) =>
-        (m.teamA?.name + " " + m.teamB?.name).toLowerCase().includes(findMatch.toLowerCase())
+    const filteredTeam = allTeams.filter((t) =>
+        t.name.toLowerCase().includes(teamId.toLowerCase())
     )
-    const filteredWinner = allTeams.filter((t)=>
-    t.name.toLowerCase().includes(teamBSearch.toLowerCase())
+    const filteredMatches = allMatch.filter((match) => {
+        const teamNames = `${match.teamA?.name} ${match.teamB?.name}`;
+        return teamNames.toLowerCase().includes(matchstatsId.toLowerCase());
+    })
+    const filteredWinner = allTeams.filter((t) =>
+        t.name.toLowerCase().includes(winner.toLowerCase())
     )
-
+    const filteredAllPlayers = allPlayers.filter((p) =>
+        p.name.toLowerCase().includes(player.toLowerCase()))
 
     async function handleCreateTournament(e) {
         e.preventDefault()
@@ -274,12 +302,38 @@ export function AdminDashboard() {
             <form onSubmit={addTeamToTournament} className="border rounded-lg p-4 space-y-3">
                 <h2 className="text-xl font-semibold">Add Team to Tournament</h2>
                 <div>
-                    <label className="block text-sm">Tournament Id</label>
-                    <input type="text" value={tournamentId} onChange={(e) => setTournamentId(e.target.value)} className="border rounded px-2 py-1 w-full" />
+                    <label className="block text-sm">Tournament</label>
+                    <input type="text" value={tournamentId} placeholder='Search by name' onChange={(e) => {setTournamentId(e.target.value);setAddTournamentName('')}} className="border rounded px-2 py-1 w-full" />
+                     {tournamentId && !addTournamentName && (
+                        <div className="border rounded bg-white shadow mt-1">
+                            {filteredaddTournamentName.map((t) => (
+                                <p
+                                    key={t._id}
+                                    className="px-2 py-1 hover:bg-gray-100 cursor-pointer"
+                                    onClick={() => { setAddTournamentName(t._id); setTournamentId(t.name) }}
+                                >
+                                    {t.name}
+                                </p>
+                            ))}
+                        </div>
+                    )}
                 </div>
                 <div>
-                    <label className="block text-sm">Team Id</label>
-                    <input type="text" value={teamId} onChange={(e) => setTeamId(e.target.value)} className="border rounded px-2 py-1 w-full" />
+                    <label className="block text-sm">Team</label>
+                    <input type="text" value={teamId} placeholder='Search by name' onChange={(e) => {setTeamId(e.target.value);setAddTeamName('')}} className="border rounded px-2 py-1 w-full" />
+                      {teamId && ! addTeamName&& (
+                        <div className="border rounded bg-white shadow mt-1">
+                            {filteredTeam.map((t) => (
+                                <p
+                                    key={t._id}
+                                    className="px-2 py-1 hover:bg-gray-100 cursor-pointer"
+                                    onClick={() => { setAddTeamName(t._id); setTeamId(t.name) }}
+                                >
+                                    {t.name}
+                                </p>
+                            ))}
+                        </div>
+                    )}
                 </div>
                 <button className="bg-blue-600 text-white px-4 py-1 rounded">Add</button>
                 {addTeamError && <p className="text-red-600 text-sm mt-2">{addTeamError}</p>}
@@ -398,8 +452,8 @@ export function AdminDashboard() {
                     )}
                 </div>
                 <div className='relative'>
-                    <label className="block text-sm">Winner (Team Id)</label>
-                    <input type="text" value={winner} onChange={(e) => {setWinner(e.target.value);setwinnerName('')}} className="border rounded px-2 py-1 w-full" />
+                    <label className="block text-sm">Winner</label>
+                    <input type="text" value={winner} onChange={(e) => { setWinner(e.target.value); setwinnerName('') }} placeholder='Search by team name' className="border rounded px-2 py-1 w-full" />
                     {winner && !winnerName && (
                         <div className="border rounded bg-white shadow mt-1">
                             {filteredWinner.map((t) => (
@@ -424,17 +478,46 @@ export function AdminDashboard() {
 
             <form onSubmit={createPlayerStats} className="border rounded-lg p-4 space-y-3">
                 <h2 className="text-xl font-semibold">Add Player Match Stats</h2>
-                <div>
-                    <label className="block text-sm">Match Id</label>
-                    <input type="text" value={matchstatsId} onChange={(e) => setMatchStatsId(e.target.value)} className="border rounded px-2 py-1 w-full" />
+                <div className='relative'>
+                    <label className="block text-sm">Match</label>
+                    <input type="text" value={matchstatsId} placeholder='Search by name' onChange={(e) => { setMatchStatsId(e.target.value); setStatsMatch('') }} className="border rounded px-2 py-1 w-full" />
+                    {matchstatsId && !statsMatch && (
+                        <div className="border rounded bg-white shadow mt-1">
+                            {
+                                filteredMatches.map((m) => (
+                                    <p className="px-2 py-1 hover:bg-gray-100 cursor-pointer" key={m._id} onClick={() => { setMatchStatsId(m.teamA?.name + " " + m.teamB?.name); setStatsMatch(m._id) }}>{m.teamA?.name} vs {m.teamB?.name}</p>
+                                ))
+                            }
+                        </div>
+                    )
+
+
+                    }
                 </div>
-                <div>
-                    <label className="block text-sm">Player Id</label>
-                    <input type="text" value={player} onChange={(e) => setPlayer(e.target.value)} className="border rounded px-2 py-1 w-full" />
+                <div className='relative'>
+                    <label className="block text-sm">Player</label>
+                    <input type="text" placeholder='Search by name' value={player} onChange={(e) => { setPlayer(e.target.value); setStatsPlayer('') }} className="border rounded px-2 py-1 w-full" />
+                    {player && !statsPlayer && (
+                        <div className="border rounded bg-white shadow mt-1">{filteredAllPlayers.map((p) => (
+                            <p className="px-2 py-1 hover:bg-gray-100 cursor-pointer" key={p._id} onClick={() => { setPlayer(p.name); setStatsPlayer(p._id) }}>{p.name}</p>
+                        ))}
+                        </div>
+                    )
+
+                    }
                 </div>
-                <div>
-                    <label className="block text-sm">Team Id</label>
-                    <input type="text" value={team} onChange={(e) => setTeam(e.target.value)} className="border rounded px-2 py-1 w-full" />
+                <div className='relative'>
+                    <label className="block text-sm">Team</label>
+                    <input type="text" placeholder='Serach by name' value={team} onChange={(e) => { setTeam(e.target.value); setStatsTeam('') }} className="border rounded px-2 py-1 w-full" />
+                    {team && !statsTeam && (
+                        <div className='border rounded bg-white shadow mt-1'>
+                            {
+                                filteredTeamB.map((t) => (
+                                    <p className='px-2 py-1 hover:bg-gray-100 cursor-pointer' key={t._id} onClick={() => { setStatsTeam(t._id); setTeam(t.name) }} >{t.name}</p>
+                                ))
+                            }
+                        </div>
+                    )}
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                     <div>
