@@ -7,6 +7,7 @@ export function PlayerStats() {
     const [stats, setStats] = useState(null)
     const [players, setPlayers] = useState([])
     const [search, setSearch] = useState("")
+    const [loading, setLoading] = useState(false)
 
     async function handleSearch(e) {
         e.preventDefault()
@@ -23,22 +24,36 @@ export function PlayerStats() {
     }, [])
 
     async function getPlayers() {
+        try {
+            setLoading(true)
+            const response = await axiosInstance.get("/totalstats/players")
+            setPlayers(response.data)
+        }
+        catch (error) {
+            console.log(error)
+        }
+        finally {
+            setLoading(false)
+        }
 
-        const response = await axiosInstance.get("/totalstats/players")
-
-        setPlayers(response.data)
     }
     const filteredPlayers = players.filter((item) =>
         item.player.name.toLowerCase().includes(search.toLowerCase())
     )
+    if (loading) return <div className="p-4 text-gray-500"><div className="fixed inset-0 bg-black/50 flex justify-center items-center">
+        <div className="bg-white p-5 rounded-lg">
+            Loading...
 
+        </div>
+
+    </div></div>
     return (
         <div className="min-h-screen bg-gray-100 py-8">
             <div className="max-w-6xl mx-auto px-4">
 
                 <h1 className="text-3xl font-bold text-center mb-8">
                     Player Statistics
-                </h1>   
+                </h1>
                 <div className="bg-white rounded-lg shadow-md p-6 mb-8">
 
                     <h2 className="text-xl font-semibold mb-4">
@@ -147,9 +162,9 @@ export function PlayerStats() {
                                             {item.catches}
                                         </td>
                                         <td className="py-3 px-4 text-center">
-                                        <Link to={"/players/"+item.player._id } className='text-blue-600'>View</Link>
+                                            <Link to={"/players/" + item.player._id} className='text-blue-600'>View</Link>
                                         </td>
-                                        
+
                                     </tr>
 
                                 ))
