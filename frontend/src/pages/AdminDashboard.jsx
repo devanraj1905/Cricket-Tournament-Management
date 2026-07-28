@@ -44,6 +44,7 @@ export function AdminDashboard() {
     const [promoteError, setPromoteError] = useState('')
     const [findMatch, setFindMatch] = useState('')
     const [allMatch, setAllMatch] = useState([])
+    const [winnerName,setwinnerName]=useState('')
 
     useEffect(() => {
         async function fetchAllTeams() {
@@ -393,9 +394,22 @@ export function AdminDashboard() {
                         </div>
                     )}
                 </div>
-                <div>
+                <div className='relative'>
                     <label className="block text-sm">Winner (Team Id)</label>
-                    <input type="text" value={winner} onChange={(e) => setWinner(e.target.value)} className="border rounded px-2 py-1 w-full" />
+                    <input type="text" value={winner} onChange={(e) => {setWinner(e.target.value);setwinnerName('')}} className="border rounded px-2 py-1 w-full" />
+                    {winner && !winnerName && (
+                        <div className="border rounded bg-white shadow mt-1">
+                            {filteredTeamA.map((t) => (
+                                <p
+                                    key={t._id}
+                                    className="px-2 py-1 hover:bg-gray-100 cursor-pointer"
+                                    onClick={() => { setwinnerName(t._id); setTeamASearch(t.name) }}
+                                >
+                                    {t.name}
+                                </p>
+                            ))}
+                        </div>
+                    )}
                 </div>
                 <div>
                     <label className="block text-sm">Result</label>
