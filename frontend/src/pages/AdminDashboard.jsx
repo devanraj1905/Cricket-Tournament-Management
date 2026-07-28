@@ -99,7 +99,7 @@ export function AdminDashboard() {
     const filteredMatches = allMatch.filter((m) =>
         (m.teamA?.name + " " + m.teamB?.name).toLowerCase().includes(findMatch.toLowerCase())
     )
-    const filterdWinner = allTeams.filter((t)=>
+    const filteredWinner = allTeams.filter((t)=>
     t.name.toLowerCase().includes(teamBSearch.toLowerCase())
     )
 
@@ -402,11 +402,11 @@ export function AdminDashboard() {
                     <input type="text" value={winner} onChange={(e) => {setWinner(e.target.value);setwinnerName('')}} className="border rounded px-2 py-1 w-full" />
                     {winner && !winnerName && (
                         <div className="border rounded bg-white shadow mt-1">
-                            {filterdWinner.map((t) => (
+                            {filteredWinner.map((t) => (
                                 <p
                                     key={t._id}
                                     className="px-2 py-1 hover:bg-gray-100 cursor-pointer"
-                                    onClick={() => { setwinnerName(t._id); setTeamASearch(t.name) }}
+                                    onClick={() => { setwinnerName(t._id); setWinner(t.name) }}
                                 >
                                     {t.name}
                                 </p>
