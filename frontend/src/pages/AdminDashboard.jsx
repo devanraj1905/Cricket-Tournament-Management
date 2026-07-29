@@ -26,7 +26,7 @@ export function AdminDashboard() {
     const [runsScored, setRunsScored] = useState("")
     const [ballsFaced, setBallsFaced] = useState("")
     const [wicketTacken, setWicketTaken] = useState("")
-    const [catches, setCatches] = useState(0)
+    const [catches, setCatches] = useState('')
     const [oversBowled, setOversbowled] = useState("")
     const [runConceded, setRunConceded] = useState("")
     const [tournamentError, setTournamentError] = useState('')

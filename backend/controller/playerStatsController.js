@@ -11,10 +11,18 @@ export const createPlayerStats = async (req, res) => {
         }
 
         const playerStats = await PlayerMatchStats.create({
-            match: matchId,player,team,runsScored,ballsFaced,wicketsTaken,oversBowled,runsConceded,catches,
-        });
+                        match: matchId,
+                        player,
+                        team,
+                        runsScored: Number(runsScored) || 0,
+                        ballsFaced: Number(ballsFaced) || 0,
+                        wicketsTaken: Number(wicketsTaken) || 0,
+                        oversBowled: Number(oversBowled) || 0,
+                        runsConceded: Number(runsConceded) || 0,
+                        catches: Number(catches) || 0,
+                    });
 
-        res.status(201).json(playerStats);  
+        res.status(201).json(playerStats);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
