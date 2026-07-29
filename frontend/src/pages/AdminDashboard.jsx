@@ -80,7 +80,7 @@ export function AdminDashboard() {
     useEffect(() => {
         async function fetchAllPlayers() {
             try {
-                const response = await axiosInstance.get('/player/all')
+                const response = await axiosInstance.get('/player/all/players')
                 setAllPlayers(response.data)
             }
             catch (error) {
