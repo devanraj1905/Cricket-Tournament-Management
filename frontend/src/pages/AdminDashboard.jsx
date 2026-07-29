@@ -713,7 +713,7 @@ export function AdminDashboard() {
     const filteredWinner = allTeams.filter((t) =>
         t.name.toLowerCase().includes(winner.toLowerCase())
     )
-    const filteredAllPlayers = allPlayers.filter((p) =>
+    const filteredAllPlayers = allPlayers.filter((p) => 
         p.name.toLowerCase().includes(player.toLowerCase()))
     const filteredStatsTeam = allTeams.filter((t) =>
         t.name.toLowerCase().includes(team.toLowerCase())
