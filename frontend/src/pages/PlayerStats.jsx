@@ -14,9 +14,10 @@ export function PlayerStats() {
         try {
             const response = await axiosInstance.get("/totalstats/player/search?email" + playerId)
             setStats(response.data)
+            
         } catch (error) {
             setStats(null)
-            console.log(error)
+            onsole.log(error)
         }
     }
     useEffect(() => {
@@ -47,6 +48,8 @@ export function PlayerStats() {
         </div>
 
     </div></div>
+    
+    
     return (
         <div className="min-h-screen bg-gray-100 py-8">
             <div className="max-w-6xl mx-auto px-4">
