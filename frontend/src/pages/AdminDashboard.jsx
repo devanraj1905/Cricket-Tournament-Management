@@ -49,8 +49,8 @@ export function AdminDashboard() {
     const [statsPlayer, setStatsPlayer] = useState('')
     const [statsTeam, setStatsTeam] = useState('')
     const [allPlayers, setAllPlayers] = useState([])
-    const [addTeamName,setAddTeamName]=useState('')
-    const [addTournamentName,setAddTournamentName]=useState('')
+    const [addTeamName, setAddTeamName] = useState('')
+    const [addTournamentName, setAddTournamentName] = useState('')
 
 
     useEffect(() => {
@@ -131,6 +131,9 @@ export function AdminDashboard() {
     )
     const filteredAllPlayers = allPlayers.filter((p) =>
         p.name.toLowerCase().includes(player.toLowerCase()))
+    const filteredStatsTeam = allTeams.filter((t) =>
+        t.name.toLowerCase().includes(team.toLowerCase())
+    )
 
     async function handleCreateTournament(e) {
         e.preventDefault()
@@ -211,18 +214,47 @@ export function AdminDashboard() {
         }
     }
 
+    // async function createPlayerStats(e) {
+    //     e.preventDefault()
+    //     if (!matchstatsId || !player || !team) {
+    //         setStatsError('Required field')
+    //         return
+    //     }
+    //     try {
+    //         const response = await axiosInstance.post('/playerstats/createstats/' + matchstatsId, { player, team, runsScored, ballsFaced, wicketsTaken: wicketTacken, oversBowled, runConceded, catches })
+    //         setStatsError('')
+    //         setMatchStatsId("")
+    //         setPlayer("")
+    //         setTeam("")
+    //         setRunsScored("")
+    //         setBallsFaced("")
+    //         setWicketTaken("")
+    //         setOversbowled("")
+    //         setRunConceded("")
+    //         setCatches("")
+    //     } catch (error) {
+    //         setStatsError(error.response.data.message)
+    //     }
+    // }
     async function createPlayerStats(e) {
         e.preventDefault()
-        if (!matchstatsId || !player || !team) {
+        if (!statsMatch || !statsPlayer || !statsTeam) {
             setStatsError('Required field')
             return
         }
         try {
-            const response = await axiosInstance.post('/playerstats/createstats/' + matchstatsId, { player, team, runsScored, ballsFaced, wicketsTaken: wicketTacken, oversBowled, runConceded, catches })
+            const response = await axiosInstance.post('/playerstats/createstats/' + statsMatch, {
+                player: statsPlayer,
+                team: statsTeam,
+                runsScored, ballsFaced, wicketsTaken: wicketTacken, oversBowled, runConceded, catches
+            })
             setStatsError('')
             setMatchStatsId("")
+            setStatsMatch("")
             setPlayer("")
+            setStatsPlayer("")
             setTeam("")
+            setStatsTeam("")
             setRunsScored("")
             setBallsFaced("")
             setWicketTaken("")
@@ -233,7 +265,6 @@ export function AdminDashboard() {
             setStatsError(error.response.data.message)
         }
     }
-
     async function handleSearchPromote(e) {
         e.preventDefault()
         try {
@@ -303,8 +334,8 @@ export function AdminDashboard() {
                 <h2 className="text-xl font-semibold">Add Team to Tournament</h2>
                 <div>
                     <label className="block text-sm">Tournament</label>
-                    <input type="text" value={tournamentId} placeholder='Search by name' onChange={(e) => {setTournamentId(e.target.value);setAddTournamentName('')}} className="border rounded px-2 py-1 w-full" />
-                     {tournamentId && !addTournamentName && (
+                    <input type="text" value={tournamentId} placeholder='Search by name' onChange={(e) => { setTournamentId(e.target.value); setAddTournamentName('') }} className="border rounded px-2 py-1 w-full" />
+                    {tournamentId && !addTournamentName && (
                         <div className="border rounded bg-white shadow mt-1">
                             {filteredaddTournamentName.map((t) => (
                                 <p
@@ -320,8 +351,8 @@ export function AdminDashboard() {
                 </div>
                 <div>
                     <label className="block text-sm">Team</label>
-                    <input type="text" value={teamId} placeholder='Search by name' onChange={(e) => {setTeamId(e.target.value);setAddTeamName('')}} className="border rounded px-2 py-1 w-full" />
-                      {teamId && ! addTeamName&& (
+                    <input type="text" value={teamId} placeholder='Search by name' onChange={(e) => { setTeamId(e.target.value); setAddTeamName('') }} className="border rounded px-2 py-1 w-full" />
+                    {teamId && !addTeamName && (
                         <div className="border rounded bg-white shadow mt-1">
                             {filteredTeam.map((t) => (
                                 <p
