@@ -6,29 +6,41 @@ export function PlayerProfile() {
     const { playerId } = useParams()
     const [player, setPlayer] = useState(null)
     const [stats, setStats] = useState(null)
+    const [loading,setLoading]=useState(false)
 
     useEffect(() => {
         async function fetchPlayer() {
             try {
+                setLoading(true)
                 const response = await axiosInstance.get('/player/' + playerId)
                 setPlayer(response.data)
             } catch (error) {
                 console.log(error)
             }
+            finally{
+                setLoading(false)
+            }
         }
         async function fetchStats() {
-            try {
+            try {setLoading(true)
                 const response = await axiosInstance.get('/totalstats/player/' + playerId)
                 setStats(response.data)
             } catch (error) {
                 setStats(null)
                 console.log(error)
             }
+            finally{
+                setLoading(false)
+            }
         }
         fetchPlayer()
         fetchStats()
     }, [playerId])
-
+if (loading) return <div className="p-4 text-gray-500"><div className="fixed inset-0 bg-black/50 flex justify-center items-center">
+                            <div className="bg-white p-5 rounded-lg">
+                                Loading...
+                            </div>
+                        </div></div>
     return (
         <div className="max-w-xl mx-auto mt-10 px-4">
             {player && (
