@@ -19,7 +19,8 @@ export function Login() {
             setUser(response.data)
             navigate('/')
         } catch (error) {
-            setError(error.response.data.message)
+            setError(error.response?.data?.message || "Something went wrong");
+
             setTimeout(() => {
                 setError("");
             }, 3000);
@@ -31,9 +32,9 @@ export function Login() {
     if (loading) return <div className="p-4 text-gray-500"><div className="fixed inset-0 bg-black/50 flex justify-center items-center">
         <div className="bg-white p-5 rounded-lg">
             Loading...
-            
+
         </div>
-        
+
     </div></div>
 
     return (
